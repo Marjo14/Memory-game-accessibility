@@ -10,20 +10,28 @@ const animals = [
   { emoji: '🦜', name: 'Perroquet' }
 ];
 
-// État du jeu
+// ==================== CONSTANTES / ÉTAT ====================
+const COLS = 4; // nombre de colonnes visibles sur la grille (4x4)
 let cards = [];
 let flippedCards = [];
 let matchedPairs = 0;
 let moves = 0;
 let canFlip = true;
 
-// Éléments DOM
+// ==================== ÉLÉMENTS DOM ====================
 const gameGrid = document.getElementById('game-grid');
 const moveCountEl = document.getElementById('move-count');
 const resetButton = document.getElementById('reset-button');
 const statusEl = document.getElementById('game-status');
 
-// ==================== FONCTION MÉLANGE ====================
+// Accessibility: region de statut
+if (statusEl) {
+  statusEl.setAttribute('role', 'status');
+  statusEl.setAttribute('aria-live', 'polite');
+  statusEl.setAttribute('aria-atomic', 'true');
+}
+
+// ==================== UTILITAIRES ====================
 function shuffle(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -33,9 +41,82 @@ function shuffle(array) {
   return shuffled;
 }
 
-// ==================== INIT JEU ====================
+function updateMoveCount() {
+  if (moveCountEl) moveCountEl.textContent = moves.toString();
+}
+
+function announce(message) {
+  if (!statusEl) return;
+  statusEl.textContent = '';
+  setTimeout(() => { statusEl.textContent = message; }, 50);
+}
+
+function getCardLabel(card, index) {
+  if (card.isMatched) return `${card.name}, paire trouvée`;
+  if (card.isFlipped) return `${card.name}, carte retournée`;
+  return `Carte ${index + 1}, masquée`;
+}
+
+function focusCardByIndex(index) {
+  if (!gameGrid) return;
+  const target = gameGrid.querySelector(`[data-index="${index}"]`);
+  if (target) target.focus();
+}
+
+// ==================== RENDU ====================
+function renderBoard() {
+  if (!gameGrid) return;
+
+  // mémoriser focus pour restaurer après rerender
+  const active = document.activeElement;
+  const prevIndex = active && active.closest && active.closest('#game-grid') ? parseInt(active.dataset.index, 10) : null;
+
+  gameGrid.innerHTML = '';
+  gameGrid.setAttribute('role', 'grid');
+  gameGrid.setAttribute('aria-label', 'Plateau du jeu — mémoire');
+  gameGrid.setAttribute('aria-rowcount', Math.ceil(cards.length / COLS).toString());
+  gameGrid.setAttribute('aria-colcount', COLS.toString());
+
+  cards.forEach((card, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'card';
+    if (card.isFlipped) button.classList.add('card--flipped');
+    if (card.isMatched) button.classList.add('card--matched');
+
+    button.setAttribute('role', 'gridcell');
+    button.setAttribute('data-id', card.id.toString());
+    button.setAttribute('data-index', index.toString());
+    button.setAttribute('aria-label', getCardLabel(card, index));
+    button.setAttribute('aria-selected', card.isFlipped ? 'true' : 'false');
+    button.setAttribute('aria-rowindex', (Math.floor(index / COLS) + 1).toString());
+    button.setAttribute('aria-colindex', ((index % COLS) + 1).toString());
+
+    button.tabIndex = card.isMatched ? -1 : 0;
+    if (card.isMatched) button.disabled = true;
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'card-icon';
+    iconSpan.setAttribute('aria-hidden', 'true');
+    iconSpan.textContent = card.isFlipped || card.isMatched ? card.emoji : '🌿';
+
+    button.appendChild(iconSpan);
+
+    button.addEventListener('click', handleCardClick);
+    button.addEventListener('keydown', handleCardKeyDown);
+
+    gameGrid.appendChild(button);
+  });
+
+  // restaurer focus si possible
+  if (prevIndex !== null && !Number.isNaN(prevIndex)) {
+    setTimeout(() => focusCardByIndex(prevIndex), 0);
+  }
+}
+
+// ==================== LOGIQUE DU JEU ====================
 function initGame() {
-  const pairs = [...animals, ...animals]; // 2 fois chaque animal
+  const pairs = [...animals, ...animals];
   const shuffledPairs = shuffle(pairs);
 
   cards = shuffledPairs.map((animal, index) => ({
@@ -50,68 +131,26 @@ function initGame() {
   matchedPairs = 0;
   moves = 0;
   canFlip = true;
+
   updateMoveCount();
   renderBoard();
-  announce('Nouvelle partie commencée. 16 cartes, 8 paires à trouver.');
-}
+  announce(`Nouvelle partie commencée. ${cards.length} cartes, ${animals.length} paires à trouver.`);
 
-// ==================== RENDU DU PLATEAU ====================
-function getCardLabel(card) {
-  if (card.isMatched) {
-    return `${card.name}, paire trouvée`;
-  }
-  if (card.isFlipped) {
-    return `${card.name}, carte retournée`;
-  }
-  return `Carte ${card.id + 1}, masquée`;
-}
-
-function renderBoard() {
-  gameGrid.innerHTML = '';
-
-  cards.forEach((card) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'card';
-    if (card.isFlipped) button.classList.add('card--flipped');
-    if (card.isMatched) {
-      button.classList.add('card--matched');
-      button.disabled = true;
-    }
-
-    button.setAttribute('role', 'gridcell');
-    button.setAttribute('data-id', card.id.toString());
-    button.setAttribute('aria-label', getCardLabel(card));
-
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'card-icon';
-    iconSpan.setAttribute('aria-hidden', 'true');
-    iconSpan.textContent = card.isFlipped || card.isMatched ? card.emoji : '🌿';
-
-    button.appendChild(iconSpan);
-    button.addEventListener('click', handleCardClick);
-
-    gameGrid.appendChild(button);
-  });
-}
-
-// ==================== LOGIQUE DU JEU ====================
-function updateMoveCount() {
-  moveCountEl.textContent = moves.toString();
-}
-
-function announce(message) {
-  statusEl.textContent = message;
+  // focus sur la première carte interactive
+  setTimeout(() => {
+    const first = gameGrid.querySelector('.card:not([disabled])');
+    if (first) first.focus();
+  }, 100);
 }
 
 function handleCardClick(event) {
   if (!canFlip) return;
-
   const button = event.currentTarget;
-  const cardId = parseInt(button.dataset.id, 10);
-  const card = cards[cardId];
+  const index = parseInt(button.dataset.index, 10);
+  if (Number.isNaN(index)) return;
 
-  if (card.isFlipped || card.isMatched) return;
+  const card = cards[index];
+  if (!card || card.isFlipped || card.isMatched) return;
 
   card.isFlipped = true;
   flippedCards.push(card);
@@ -128,15 +167,18 @@ function handleCardClick(event) {
 
 function checkMatch() {
   const [card1, card2] = flippedCards;
+  if (!card1 || !card2) {
+    flippedCards = [];
+    canFlip = true;
+    return;
+  }
 
   if (card1.name === card2.name) {
     card1.isMatched = true;
     card2.isMatched = true;
     matchedPairs++;
-    announce(`Paire trouvée ! ${card1.name}. ${8 - matchedPairs} paires restantes.`);
-    if (matchedPairs === 8) {
-      setTimeout(handleVictory, 500);
-    }
+    announce(`Paire trouvée : ${card1.name}. ${animals.length - matchedPairs} paires restantes.`);
+    if (matchedPairs === animals.length) setTimeout(handleVictory, 500);
   } else {
     card1.isFlipped = false;
     card2.isFlipped = false;
@@ -153,14 +195,47 @@ function handleVictory() {
   announce(message + ' Appuyez sur Recommencer pour rejouer.');
 }
 
-// ==================== RESET ====================
-resetButton.addEventListener('click', () => {
-  initGame();
-  setTimeout(() => {
-    const firstCardButton = gameGrid.querySelector('.card');
-    if (firstCardButton) firstCardButton.focus();
-  }, 100);
-});
+// ==================== NAVIGATION CLAVIER (FLÈCHES) ====================
+function handleCardKeyDown(event) {
+  const key = event.key;
+  const current = event.currentTarget;
+  const idx = parseInt(current.dataset.index, 10);
+  if (Number.isNaN(idx)) return;
 
-// DÉMARRAGE
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(key)) {
+    event.preventDefault();
+    let target = idx;
+    const row = Math.floor(idx / COLS);
+    const col = idx % COLS;
+    const rows = Math.ceil(cards.length / COLS);
+
+    if (key === 'ArrowLeft') {
+      target = col > 0 ? idx - 1 : idx;
+    } else if (key === 'ArrowRight') {
+      target = (col < COLS - 1 && idx + 1 < cards.length) ? idx + 1 : idx;
+    } else if (key === 'ArrowUp') {
+      target = row > 0 ? idx - COLS : idx;
+    } else if (key === 'ArrowDown') {
+      target = row < rows - 1 && idx + COLS < cards.length ? idx + COLS : idx;
+    } else if (key === 'Home') {
+      target = row * COLS;
+    } else if (key === 'End') {
+      target = Math.min((row + 1) * COLS - 1, cards.length - 1);
+    }
+
+    if (target !== idx) focusCardByIndex(target);
+    return;
+  }
+
+  // Enter/Space déclenchent automatiquement le click sur <button>
+}
+
+// ==================== RESET ====================
+if (resetButton) {
+  resetButton.addEventListener('click', () => {
+    initGame();
+  });
+}
+
+// ==================== DÉMARRAGE ====================
 initGame();
