@@ -49,6 +49,38 @@ function announce(message) {
   if (!statusEl) return;
   statusEl.textContent = '';
   setTimeout(() => { statusEl.textContent = message; }, 50);
+
+  // Visual announcement for hard-of-hearing users (toast)
+  showVisualNotice(message);
+}
+
+// Ajout : création et affichage d'une annonce visuelle
+function showVisualNotice(message, duration = 4000) {
+  // ne rien faire si DOM non prêt
+  if (!document.body) return;
+
+  let el = document.getElementById('visual-announcement');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'visual-announcement';
+    el.className = 'visual-announcement';
+    el.setAttribute('aria-hidden', 'true'); // c'est visuel, pas répété aux lecteurs
+    el.innerHTML = '<span class="va-icon">🔔</span><div class="va-text"></div>';
+    document.body.appendChild(el);
+  }
+
+  const text = el.querySelector('.va-text');
+  text.textContent = message;
+
+  // show
+  el.classList.add('visible');
+
+  // reset hide timer
+  if (el._hideTimer) clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => {
+    el.classList.remove('visible');
+    el._hideTimer = null;
+  }, duration);
 }
 
 function getCardLabel(card, index) {

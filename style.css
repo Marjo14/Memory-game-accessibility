@@ -138,6 +138,54 @@ h1 {
   font-weight: 500;
 }
 
+/* Visual announcement (toast) for hard-of-hearing users */
+.visual-announcement {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  min-width: 280px;
+  max-width: calc(100% - 32px);
+  background: #fff3e0;
+  color: #3e2723;
+  border: 2px solid #ffcc80;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-weight: 600;
+  z-index: 1200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* visible state */
+.visual-announcement.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* icon */
+.visual-announcement .va-icon {
+  font-size: 1.2rem;
+}
+
+/* message text */
+.visual-announcement .va-text {
+  flex: 1;
+  text-align: left;
+}
+
+/* reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .visual-announcement,
+  .visual-announcement.visible { transition: none; transform: translateX(-50%); }
+}
+
 /* Responsive simple */
 @media (max-width: 500px) {
   .game-grid {
