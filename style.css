@@ -141,11 +141,12 @@ h1 {
 /* Visual announcement (toast) for hard-of-hearing users */
 .visual-announcement {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  left: auto;
+  right: 16px; /* à droite de l'écran */
   bottom: 16px;
+  transform: none; /* retirer translateX */
   min-width: 280px;
-  max-width: calc(100% - 32px);
+  max-width: 320px;
   background: #fff3e0;
   color: #3e2723;
   border: 2px solid #ffcc80;
@@ -166,7 +167,7 @@ h1 {
 .visual-announcement.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(-6px);
+  transform: translateY(-6px); /* retirer translateX(-50%) */
 }
 
 /* icon */
@@ -183,7 +184,10 @@ h1 {
 /* reduced motion respect */
 @media (prefers-reduced-motion: reduce) {
   .visual-announcement,
-  .visual-announcement.visible { transition: none; transform: translateX(-50%); }
+  .visual-announcement.visible { 
+    transition: none; 
+    transform: none; 
+  }
 }
 
 /* Responsive simple */

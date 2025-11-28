@@ -205,21 +205,60 @@ function checkMatch() {
     return;
   }
 
+  // retrouver les indices actuels des cartes dans l'array
+  const idx1 = cards.findIndex(c => c === card1);
+  const idx2 = cards.findIndex(c => c === card2);
+
   if (card1.name === card2.name) {
     card1.isMatched = true;
     card2.isMatched = true;
     matchedPairs++;
     announce(`Paire trouvée : ${card1.name}. ${animals.length - matchedPairs} paires restantes.`);
-    if (matchedPairs === animals.length) setTimeout(handleVictory, 500);
+    if (matchedPairs === animals.length) {
+      setTimeout(handleVictory, 500);
+    }
+
+    // après appariement, chercher une carte interactive voisine pour placer le focus
+    const findNextInteractive = (start) => {
+      // forward search
+      for (let i = start + 1; i < cards.length; i++) {
+        if (!cards[i].isMatched) return i;
+      }
+      // backward search
+      for (let i = start - 1; i >= 0; i--) {
+        if (!cards[i].isMatched) return i;
+      }
+      return null;
+    };
+
+    // choisir une position proche à partir de la plus petite des deux indices
+    const base = Math.min(idx1, idx2);
+    const nextIndex = findNextInteractive(base);
+    flippedCards = [];
+    canFlip = true;
+    renderBoard();
+
+    if (nextIndex !== null) {
+      // attendre que DOM soit mis à jour avant focus
+      setTimeout(() => focusCardByIndex(nextIndex), 0);
+    } else {
+      // sinon, focus sur le bouton recommencer s'il existe
+      const rb = document.getElementById('reset-button');
+      if (rb) setTimeout(() => rb.focus(), 0);
+    }
+
   } else {
+    // pas de correspondance : retourner les cartes
     card1.isFlipped = false;
     card2.isFlipped = false;
     announce('Pas de correspondance. Essayez encore.');
-  }
 
-  flippedCards = [];
-  canFlip = true;
-  renderBoard();
+    // restaurer le focus sur la première carte cliquée (si elle existe)
+    flippedCards = [];
+    canFlip = true;
+    renderBoard();
+    if (idx1 !== -1) setTimeout(() => focusCardByIndex(idx1), 0);
+  }
 }
 
 function handleVictory() {
