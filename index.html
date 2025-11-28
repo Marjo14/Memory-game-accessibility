@@ -31,76 +31,27 @@
         </button>
       </div>
 
-      <!-- Grille des cartes -->
+      <!-- Grille des cartes : générée en JS -->
       <div
         class="game-grid"
+        id="game-grid"
         role="grid"
         aria-label="Grille de 16 cartes, appuyez sur Entrée pour retourner une carte"
       >
-        <!-- 16 cartes, toutes avec l’emoji 🌿 masqué pour les lecteurs d'écran -->
-        <!-- Tu peux garder les numéros dans aria-label pour l’instant -->
-
-        <button type="button" class="card" role="gridcell" aria-label="Carte 1, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 2, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 3, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 4, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-
-        <button type="button" class="card" role="gridcell" aria-label="Carte 5, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 6, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 7, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 8, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-
-        <button type="button" class="card" role="gridcell" aria-label="Carte 9, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 10, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 11, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 12, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-
-        <button type="button" class="card" role="gridcell" aria-label="Carte 13, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 14, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 15, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
-        <button type="button" class="card" role="gridcell" aria-label="Carte 16, face cachée">
-          <span class="card-icon" aria-hidden="true">🌿</span>
-        </button>
+        <!-- Les cartes sont créées par script.js -->
       </div>
 
-      <!-- Message pour tous, et aria-live pour lecteur d'écran -->
-      <p id="game-status" class="game-status" aria-live="polite">
+      <!-- Zone de feedback pour tous + lecteurs d'écran -->
+      <p
+        id="game-status"
+        class="game-status"
+        aria-live="polite"
+      >
         Retournez deux cartes pour commencer.
       </p>
     </section>
   </main>
 
-  <!-- Le JS à la fin pour être sûr que le DOM est chargé -->
   <script src="script.js"></script>
 </body>
 </html>

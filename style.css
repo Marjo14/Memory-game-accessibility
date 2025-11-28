@@ -1,14 +1,29 @@
-/* Base page */
+/* ==================== VARIABLES ==================== */
+:root {
+  --color-primary: #2d5016;
+  --color-secondary: #7cb342;
+  --color-background: #f1f8e9;
+  --color-card-back: #558b2f;
+  --color-card-front: #ffffff;
+  --color-focus: #ff6f00;
+}
+
+/* ==================== BASE ==================== */
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #f4f8e8;
-  color: #1f3a1f;
+  background-color: var(--color-background);
+  color: var(--color-primary);
   padding: 2rem;
 }
 
 main {
   max-width: 900px;
   margin: 0 auto;
+  text-align: center;
 }
 
 h1 {
@@ -16,22 +31,17 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
-p {
-  line-height: 1.5;
-}
-
-/* Zone du jeu centrée */
+/* ==================== CONTROLS ==================== */
 .game {
   margin-top: 2rem;
-  text-align: center;
 }
 
-/* Bandeau : coups + recommencer */
 .game-controls {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin: 2rem 0;
+  flex-wrap: wrap;
 }
 
 .moves,
@@ -39,24 +49,27 @@ p {
   padding: 0.7rem 1.5rem;
   border-radius: 999px;
   font-weight: 600;
+  font-size: 1rem;
 }
 
-/* bouton "coups" */
 .moves {
-  border: 2px solid #527c31;
-  background-color: #f4f8e8;
-  color: #527c31;
+  border: 2px solid var(--color-secondary);
+  background-color: #ffffff;
+  color: var(--color-secondary);
 }
 
-/* bouton reset */
 .reset-button {
-  border: 2px solid #527c31;
-  background-color: #7db343;
+  border: none;
+  background-color: var(--color-secondary);
   color: #ffffff;
   cursor: pointer;
 }
 
-/* Grille de cartes */
+.reset-button:hover {
+  background-color: var(--color-primary);
+}
+
+/* ==================== GRILLE ==================== */
 .game-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -64,13 +77,13 @@ p {
   justify-items: center;
 }
 
-/* style des cartes */
+/* ==================== CARTES ==================== */
 .card {
   width: 90px;
   height: 90px;
   border-radius: 12px;
-  border: none;
-  background-color: #527c31;
+  border: 3px solid var(--color-primary);
+  background-color: var(--color-card-back);
   cursor: pointer;
 
   display: flex;
@@ -78,33 +91,56 @@ p {
   justify-content: center;
   font-size: 2.3rem;
 
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-/* état retourné visuel (on enrichira ensuite) */
+/* HOVER : seulement quand la carte n'est pas retournée ou déjà trouvée */
+.card:hover:not(.card--flipped):not(.card--matched) {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* état retourné */
 .card.card--flipped {
-  background-color: #fdfcf5;
-  transform: scale(1.03);
-  box-shadow: 0 0 0 3px #c6d9a6;
+  background-color: var(--color-card-front);
+  border-color: var(--color-secondary);
 }
 
+/* paire trouvée */
+.card.card--matched {
+  background-color: #4caf50;
+  border-color: #4caf50;
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* contenu de la carte (emoji) */
 .card-icon {
   pointer-events: none;
 }
 
-/* focus visible (accessibilité clavier) */
+/* Focus visible (clavier) */
 .card:focus-visible,
 .reset-button:focus-visible,
 .moves:focus-visible {
-  outline: 3px solid #1a4d2e;
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
-/* message en bas */
+/* ==================== MESSAGE ==================== */
 .game-status {
   margin-top: 2rem;
   padding: 1.5rem;
   border-radius: 12px;
-  border: 2px solid #d5e1b8;
+  border: 2px solid var(--color-secondary);
   background-color: #ffffff;
+  font-weight: 500;
+}
+
+/* Responsive simple */
+@media (max-width: 500px) {
+  .game-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
