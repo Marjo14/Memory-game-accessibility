@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Green & Accessible Memory</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main>
+    <h1>Biodiversité</h1>
+    <p>
+      Trouvez toutes les paires d'animaux en danger. Jouable au clavier (Tab + Entrée)
+      et avec lecteur d'écran.
+    </p>
+
+    <section
+      class="game"
+      aria-label="Jeu de mémoire sur la biodiversité, 8 paires d'animaux à retrouver"
+    >
+      <!-- Bandeau : coups + bouton recommencer -->
+      <div class="game-controls" aria-label="Contrôles du jeu">
+        <button type="button" class="moves" disabled>
+          <span id="move-count">0</span> coups
+        </button>
+
+        <button type="button" id="reset-button" class="reset-button">
+          Recommencer
+        </button>
+      </div>
+
+      <!-- Grille des cartes -->
+      <div
+        class="game-grid"
+        role="grid"
+        aria-label="Grille de 16 cartes, appuyez sur Entrée pour retourner une carte"
+      >
+        <!-- 16 cartes, toutes avec l’emoji 🌿 masqué pour les lecteurs d'écran -->
+        <!-- Tu peux garder les numéros dans aria-label pour l’instant -->
+
+        <button type="button" class="card" role="gridcell" aria-label="Carte 1, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 2, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 3, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 4, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+
+        <button type="button" class="card" role="gridcell" aria-label="Carte 5, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 6, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 7, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 8, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+
+        <button type="button" class="card" role="gridcell" aria-label="Carte 9, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 10, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 11, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 12, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+
+        <button type="button" class="card" role="gridcell" aria-label="Carte 13, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 14, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 15, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+        <button type="button" class="card" role="gridcell" aria-label="Carte 16, face cachée">
+          <span class="card-icon" aria-hidden="true">🌿</span>
+        </button>
+      </div>
+
+      <!-- Message pour tous, et aria-live pour lecteur d'écran -->
+      <p id="game-status" class="game-status" aria-live="polite">
+        Retournez deux cartes pour commencer.
+      </p>
+    </section>
+  </main>
+
+  <!-- Le JS à la fin pour être sûr que le DOM est chargé -->
+  <script src="script.js"></script>
+</body>
+</html>
